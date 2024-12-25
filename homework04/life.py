@@ -80,3 +80,28 @@ class GameOfLife:
         Проверка, изменилось ли состояние клеток с предыдущего шага.
         """
         return self.curr_generation != self.prev_generation
+
+    @staticmethod
+    def from_file(filename: pathlib.Path) -> "GameOfLife":
+        """
+        Прочитать состояние клеток из указанного файла.
+        """
+        with open(filename, "r") as file:
+            lines = file.readlines()
+
+        grid = [[int(char) for char in line.strip()] for line in lines]
+
+        rows = len(grid)
+        cols = len(grid[0]) if rows > 0 else 0
+
+        game = GameOfLife(size=(rows, cols), randomize=False)
+        game.curr_generation = grid
+        return game
+
+    def save(self, filename: pathlib.Path) -> None:
+        """
+        Сохранить текущее состояние клеток в указанный файл.
+        """
+        with open(filename, "w") as file:
+            for row in self.curr_generation:
+                file.write("".join(map(str, row)) + "\n")

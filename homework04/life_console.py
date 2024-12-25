@@ -1,4 +1,6 @@
 import curses
+import sys
+from pathlib import Path
 
 from life import GameOfLife
 from ui import UI
@@ -46,6 +48,11 @@ class Console(UI):
 
 
 if __name__ == "__main__":
-    life = GameOfLife((10, 10), max_generations=50)
+    if len(sys.argv) > 1:
+        filepath = Path(sys.argv[1])
+        life = GameOfLife.from_file(filepath)
+    else:
+        life = GameOfLife((10, 10), randomize=True, max_generations=50)
+
     console = Console(life)
     console.run()
