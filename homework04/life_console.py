@@ -24,14 +24,28 @@ class Console(UI):
         screen = curses.initscr()
         curses.curs_set(0)  # Скрыть курсор
         screen.nodelay(True)  # Сделать ввод с клавиатуры неблокирующим
+        running = True
 
         try:
-            while not self.life.is_max_generations_exceeded and self.life.is_changing:
+            while running:
                 screen.clear()
                 self.draw_borders(screen)
                 self.draw_grid(screen)
                 screen.refresh()
+
+                key = screen.getch()
+                if key == ord("q"):  # Завершить игру на клавишу 'q'
+                    running = False
+
+                if not self.life.is_changing or self.life.is_max_generations_exceeded:
+                    running = False  # Завершить игру при остановке изменений
                 self.life.step()
                 curses.napms(200)  # Задержка обновления (200 мс)
         finally:
             curses.endwin()
+
+
+if __name__ == "__main__":
+    life = GameOfLife((10, 10), max_generations=50)
+    console = Console(life)
+    console.run()
